@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RNA Nanonets: Building Inside the Human Cell Nucleus</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:       #1a1814;
+    --ink-mid:   #3d3a34;
+    --ink-soft:  #6b6760;
+    --ink-faint: #a09c96;
+    --paper:     #faf8f4;
+    --cream:     #f2ede4;
+    --teal:      #0c6e56;
+    --teal-lt:   #e2f5ee;
+    --navy:      #12284c;
+    --navy-lt:   #e6eef7;
+    --gold:      #b07a18;
+    --gold-lt:   #fdf3dc;
+    --rule:      #d8d2c8;
+  }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Source Serif 4', Georgia, serif;
+    font-weight: 400;
+    line-height: 1.85;
+    font-size: 17px;
+  }
+
+  /* ── masthead ── */
+  .masthead {
+    border-top: 3px double var(--ink);
+    border-bottom: 1px solid var(--rule);
+    padding: 1.2rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--paper);
+  }
+  .masthead-brand {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    letter-spacing: 0.04em;
+    color: var(--ink-mid);
+  }
+  .masthead-meta {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    text-align: right;
+    line-height: 1.5;
+  }
+
+  /* ── hero ── */
+  .hero {
+    max-width: 760px;
+    margin: 3.5rem auto 0;
+    padding: 0 2rem;
+  }
+  .category-label {
+    display: inline-block;
+    background: var(--teal);
+    color: #fff;
+    font-family: 'Source Serif 4', serif;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 2px;
+    margin-bottom: 1.1rem;
+  }
+  h1.headline {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--navy);
+    margin-bottom: 1rem;
+  }
+  .deck {
+    font-size: 1.15rem;
+    font-weight: 300;
+    color: var(--ink-mid);
+    line-height: 1.7;
+    margin-bottom: 1.6rem;
+    font-style: italic;
+  }
+  .byline-bar {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    padding: 1rem 0;
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    font-size: 0.83rem;
+    color: var(--ink-soft);
+  }
+  .byline-bar strong {
+    color: var(--ink-mid);
+    font-weight: 600;
+  }
+  .tag-pill {
+    display: inline-block;
+    background: var(--navy-lt);
+    color: var(--navy);
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ── article body ── */
+  article {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem 4rem;
+  }
+
+  p { margin-bottom: 1.4rem; }
+
+  h2.section-head {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--navy);
+    margin: 3rem 0 0.9rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--teal);
+  }
+
+  /* dropcap */
+  .dropcap::first-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 4.2rem;
+    font-weight: 700;
+    line-height: 0.82;
+    float: left;
+    color: var(--teal);
+    margin: 0.05em 0.1em 0 0;
+    padding: 0.05em 0.1em 0 0;
+  }
+
+  /* pullquote */
+  .pullquote {
+    border-left: 4px solid var(--teal);
+    margin: 2.2rem 0 2.2rem 0;
+    padding: 0.8rem 1.6rem;
+    background: var(--teal-lt);
+    border-radius: 0 4px 4px 0;
+  }
+  .pullquote p {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-style: italic;
+    color: var(--teal);
+    line-height: 1.65;
+    margin: 0;
+  }
+  .pullquote cite {
+    display: block;
+    font-family: 'Source Serif 4', serif;
+    font-style: normal;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    margin-top: 0.6rem;
+    letter-spacing: 0.03em;
+  }
+
+  /* callout box */
+  .callout {
+    background: var(--gold-lt);
+    border: 1px solid #d4a955;
+    border-radius: 6px;
+    padding: 1.3rem 1.6rem;
+    margin: 2rem 0;
+  }
+  .callout-label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+  .callout p {
+    font-size: 0.95rem;
+    color: var(--ink-mid);
+    margin: 0;
+  }
+  .callout p + p { margin-top: 0.6rem; }
+
+  /* infographic section */
+  .infographic-wrap {
+    margin: 2.8rem 0;
+    background: var(--cream);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .infographic-wrap img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .infographic-caption {
+    padding: 0.8rem 1.2rem;
+    font-size: 0.82rem;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    border-top: 1px solid var(--rule);
+  }
+  .infographic-caption strong { color: var(--ink-mid); }
+
+  /* key findings grid */
+  .findings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1.8rem 0 2.2rem;
+  }
+  .finding-card {
+    background: var(--navy-lt);
+    border: 1px solid #c0cfe0;
+    border-radius: 8px;
+    padding: 1.1rem 1.2rem;
+  }
+  .finding-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--navy);
+    line-height: 1;
+    margin-bottom: 0.3rem;
+  }
+  .finding-desc {
+    font-size: 0.85rem;
+    color: var(--ink-mid);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* disease section */
+  .disease-section {
+    background: linear-gradient(135deg, var(--navy) 0%, #1a3a5c 100%);
+    color: #e8eef7;
+    border-radius: 10px;
+    padding: 2rem 2.2rem;
+    margin: 2.8rem 0;
+  }
+  .disease-section h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem;
+    color: #c8daef;
+    margin-bottom: 1rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+  }
+  .disease-section p {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: #cfd8e6;
+  }
+  .disease-list {
+    list-style: none;
+    margin: 1rem 0;
+    padding: 0;
+  }
+  .disease-list li {
+    font-size: 0.93rem;
+    color: #c0d4e8;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    gap: 0.8rem;
+    line-height: 1.5;
+  }
+  .disease-list li:last-child { border-bottom: none; }
+  .disease-list li::before {
+    content: '▸';
+    color: #5bbfa0;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* conclusion */
+  .conclusion {
+    background: var(--teal-lt);
+    border: 1px solid #9fd4c0;
+    border-radius: 8px;
+    padding: 1.8rem 2rem;
+    margin: 2.5rem 0;
+  }
+  .conclusion p {
+    margin-bottom: 0.9rem;
+    font-size: 1rem;
+    color: var(--ink-mid);
+  }
+  .conclusion p:last-child { margin-bottom: 0; }
+
+  /* ending question */
+  .ending-question {
+    margin: 2.5rem 0 0;
+    padding: 1.4rem 1.8rem;
+    border: 2px dashed var(--teal);
+    border-radius: 8px;
+    text-align: center;
+  }
+  .ending-question p {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--teal);
+    margin: 0;
+    line-height: 1.65;
+  }
+
+  /* references footer */
+  .references {
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--rule);
+  }
+  .references h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    color: var(--ink-mid);
+    margin-bottom: 0.7rem;
+  }
+  .references p {
+    font-size: 0.8rem;
+    color: var(--ink-faint);
+    line-height: 1.6;
+    margin-bottom: 0.3rem;
+  }
+
+  /* footer */
+  .site-footer {
+    border-top: 3px double var(--ink);
+    padding: 1.5rem 2rem;
+    text-align: center;
+    font-size: 0.78rem;
+    color: var(--ink-faint);
+  }
+
+  @media (max-width: 600px) {
+    h1.headline { font-size: 2rem; }
+    .masthead { flex-direction: column; gap: 0.5rem; text-align: center; }
+    .masthead-meta { text-align: center; }
+    .disease-section { padding: 1.4rem 1.2rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="masthead-brand">RNA Biology &amp; Molecular Science</div>
+  <div class="masthead-meta">
+    MS Interdisciplinary Biotechnology Program<br/>
+    RNA Biology Course — Dr. Afzal Adnan
+  </div>
+</header>
+
+<div class="hero">
+  <span class="category-label">RNA Nanotechnology</span>
+
+  <h1 class="headline">Weaving Nanonets Inside the Human Nucleus: A Breakthrough That Changes Everything</h1>
+
+  <p class="deck">Researchers have achieved what once seemed impossible — designing synthetic RNA that builds its own microscopic architecture inside the most protected compartment of our cells. Here is why it matters.</p>
+
+  <div class="byline-bar">
+    <div>
+      <strong>Fizza &amp; Sumaiya Iqbal</strong><br/>
+      MS-IBT Program, RNA Biology Course
+    </div>
+    <div style="margin-left:auto; display:flex; gap:0.5rem; flex-wrap:wrap;">
+      <span class="tag-pill">RNA Nanostructures</span>
+      <span class="tag-pill">Nuclear Biology</span>
+      <span class="tag-pill">Synthetic Biology</span>
+    </div>
+  </div>
+</div>
+
+<article>
+
+  <p class="dropcap">Picture a tiny molecular net — so small it can only be seen with an electron microscope — assembling itself, thread by thread, inside the nucleus of a living human cell. Not delivered there by injection. Not smuggled in by a virus. Grown there, from scratch, by the cell's own machinery, from a genetic blueprint that scientists designed. That is exactly what a team from Rutgers University and Arizona State University has just demonstrated, and the implications stretch far beyond a clever laboratory trick.</p>
+
+  <p>Published in <em>Nature Communications</em> in late 2025, the work by Chang, Jeziorek, Yang, and colleagues introduces a platform of designer single-stranded RNA (ssRNA) molecules that fold themselves into programmable geometric structures — rings, ribbons, and two-dimensional lattice "nanonets" — directly inside the nucleus of live human cells. It is the first time that structure-defined synthetic RNA nanostructures have been directly visualized and confirmed to persist in the nucleus of a living eukaryotic cell.</p>
+
+  <div class="callout">
+    <div class="callout-label">Why this is a big deal</div>
+    <p>For years, one of the hardest problems in nucleic acid therapeutics has been nuclear delivery and <em>retention</em>. Getting molecules into cells is hard enough. Getting them to stay in the nucleus — and maintain their shape — was considered a near-impossible challenge.</p>
+    <p>This study solves both problems in one elegant move, using the cell's own transcription machinery as the fabrication tool.</p>
+  </div>
+
+  <!-- INFOGRAPHIC -->
+  <div class="infographic-wrap">
+    <img src="Designer_RNA_Nanonet_Assembly_Overview.png" alt="Infographic: Designer RNA Nanonets — Architecture of RNA tiles and their nuclear retention and live-cell utility" />
+    <div class="infographic-caption">
+      <strong>Figure:</strong> Designer RNA Nanonets — Programmable Assembly Inside the Human Nucleus. Left panel shows how single-stranded RNA self-folds co-transcriptionally through paranemic cohesion and kissing loops into diverse geometric architectures. Right panel illustrates their exclusive nuclear localization, nanomolar-level KRAS biosensing, and real-time fluorescence visualization via Broccoli aptamers in live cells. <em>(Infographic created with NotebookLM)</em>
+    </div>
+  </div>
+
+  <h2 class="section-head">What the researchers actually built</h2>
+
+  <p>To understand the achievement, it helps to know what "RNA nanotechnology" means in practice. RNA is usually thought of as a messenger — a temporary copy of genetic information that carries instructions out of the nucleus to the ribosomes where proteins are made. But RNA molecules are also physical objects with complex three-dimensional shapes. Scientists have been learning, for the past decade, how to design RNA sequences that fold into predictable geometric structures: triangles, tubes, cages, flat lattices.</p>
+
+  <p>The problem was always the same: you could build beautiful RNA structures in a test tube. Getting them to assemble inside a living cell — and stay assembled — was another matter entirely. The cell actively dismantles or exports foreign RNA. The nucleus has its own strict traffic control system, constantly pushing molecules out through nuclear pore complexes.</p>
+
+  <p>Chang et al. cracked this problem by working <em>with</em> the cell's machinery rather than against it. Their key insight: if you encode the structural design into the cell's own DNA, the cell will transcribe the RNA and, as the RNA emerges from the RNA polymerase strand-by-strand, it will fold itself into the intended shape simultaneously. This is called <strong>co-transcriptional folding</strong>, and it is the linchpin of the whole system.</p>
+
+  <div class="findings-grid">
+    <div class="finding-card">
+      <div class="finding-number">13</div>
+      <div class="finding-desc">distinct RNA tile designs tested, from nanorings to 2D waffle-like lattices</div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-number">5 nM</div>
+      <div class="finding-desc">detection sensitivity for the KRAS cancer biomarker — nanomolar precision</div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-number">~68%</div>
+      <div class="finding-desc">of transfected human cells successfully expressed assembled RNA nanonets after 24 hours</div>
+    </div>
+    <div class="finding-card">
+      <div class="finding-number">1st</div>
+      <div class="finding-desc">direct TEM visualization of structure-defined synthetic RNA nanostructures inside a living eukaryotic nucleus</div>
+    </div>
+  </div>
+
+  <h2 class="section-head">The elegant engineering: paranemic cohesion and kissing loops</h2>
+
+  <p>Making RNA fold reliably during transcription requires clever structural engineering. The team's approach rests on two architectural features: <em>paranemic cohesion (PC)</em> and <em>kissing loops (KL)</em>.</p>
+
+  <p>Paranemic cohesion is a structural motif borrowed originally from DNA nanotechnology. Two RNA helices can interdigitate through parallel crossovers — essentially interlocking without actually knotting together. Think of two spiral staircases that share the same space but can still be pulled apart. This allows a single RNA strand to be routed continuously through the entire structure, making it genuinely "single-stranded" even though it forms a complex shape with double-helical regions. The beauty of PC is that the RNA cannot knot or become a tangled mess as it grows out of the polymerase, which was a persistent failure mode in earlier designs.</p>
+
+  <p>Kissing loops sit at the ends of the tiles — short hairpin loops whose sequences are complementary to loops on other tiles. Like molecular Velcro, tiles with matching kissing loop sequences snap together. By varying the angle of interaction (120° or 180°) and introducing <em>branch kissing loops</em>, the researchers could dictate whether tiles join into rings, straight chains, or two-dimensional grids.</p>
+
+  <div class="pullquote">
+    <p>"RNA self-folds into defined shapes simultaneously as RNA polymerase synthesizes the strand — compact, modular structures that assemble co-transcriptionally both in a test tube and inside living human cells."</p>
+    <cite>— Chang et al., Nature Communications (2026)</cite>
+  </div>
+
+  <p>To verify the structures, the team used two complementary imaging approaches. <em>Atomic force microscopy (AFM)</em> — a technique that physically traces a nanoscale probe across a surface to create topographic images — revealed beautifully regular "waffle-like" lattices in vitro. For the in-cell confirmation, they used <em>transmission electron microscopy (TEM)</em> alongside J2 monoclonal antibodies, which specifically bind double-stranded RNA helices longer than 40 base pairs. The result: unmistakable nanonet patterns visible inside the nucleus of human HEK293FT cells, with the same characteristic spacing and geometry seen in the test tube.</p>
+
+  <h2 class="section-head">Why does the nanonet stay in the nucleus?</h2>
+
+  <p>This may be the most scientifically intriguing question the paper raises, and the honest answer is that the full mechanism is not yet completely understood — which the authors openly acknowledge. What they observe is that designs D4 and D10, which form large 2D lattices, localize predominantly in the nucleus of HEK293FT cells after 24 hours. Around 49% of D4-expressing cells showed nuclear-only distribution, and the vast majority of the remaining cells showed at least partial nuclear localization.</p>
+
+  <p>The most plausible explanation comes from analogy with natural biology. The nucleus is not sealed — it has pore complexes roughly 120 nanometers in diameter. Small molecules pass through freely. But large, rigid, highly structured assemblies cannot. Natural long non-coding RNAs (lncRNAs), which are known to be retained in the nucleus, share a characteristic: they fold into highly structured conformations and interact tightly with nuclear proteins, physically preventing their export. The synthetic nanonets may behave similarly — their large footprint and rigid 2D architecture make them simply too bulky and too organized to thread through a nuclear pore.</p>
+
+  <p>In a memorable phrase from the paper, these structures may be "too large and/or too structured to undergo nuclear export." It is retention by geometry.</p>
+
+  <h2 class="section-head">Lighting up cancer: the KRAS biosensor</h2>
+
+  <p>Structure alone is scientifically impressive, but the study also demonstrates that these nanonets can be <em>functional</em> — able to sense specific molecular targets in their environment. Design D13 incorporates a "split Broccoli aptamer," a fluorescent RNA element whose two halves are inert on their own. When a specific target RNA sequence is present and binds to sensing domains on the tile, it physically pulls the two halves of the aptamer together, reconstituting the structure and switching on green fluorescence in the presence of a small dye molecule (DFHBI-1T).</p>
+
+  <p>The target chosen was a sequence from the KRAS gene — a famously important oncogene that is mutated in a large fraction of pancreatic cancers, colorectal cancers, and lung cancers. The D13 sensor detected KRAS sequences down to concentrations as low as 5–10 nM, with good discrimination against mismatched sequences. Targets with more than a few mutations produced fluorescence comparable to a negative control, demonstrating meaningful sequence specificity.</p>
+
+  <p>This was demonstrated in a cell-free system in this study, but it establishes the proof-of-concept for the next step: nanonets inside a live cell that can detect disease-relevant RNA sequences and signal their presence in real time.</p>
+
+  <!-- DISEASE RELEVANCE SECTION -->
+  <div class="disease-section">
+    <h3>🌍 Why this matters for Pakistan and South Asia</h3>
+    <p>It is easy to read about cutting-edge RNA nanotechnology and feel that the benefits belong somewhere distant. But the diseases that this technology is ultimately targeting are among the most pressing public health burdens right here in Pakistan and across South Asia.</p>
+    <ul class="disease-list">
+      <li><strong>Viral Hepatitis (B and C):</strong> Pakistan has one of the highest hepatitis C prevalence rates in the world — estimated at 4–8% of the population, meaning tens of millions of people are infected. RNA-based biosensors capable of detecting viral RNA with nanomolar sensitivity inside cells could revolutionize how we diagnose chronic hepatitis infections and monitor treatment response, without expensive PCR equipment.</li>
+      <li><strong>Cancer:</strong> Colorectal and pancreatic cancers, both strongly associated with KRAS mutations, are rising in South Asia with improving life expectancies. The KRAS-targeting biosensor demonstrated in this study is a direct step toward intracellular diagnostic tools that could one day flag early-stage cancer from a biopsy without complex genomic sequencing workflows.</li>
+      <li><strong>Tuberculosis (TB):</strong> South Asia carries a disproportionate share of the global TB burden. RNA-sensing nanonets could be designed to detect TB-specific RNA biomarkers in infected cells, offering a new generation of molecular diagnostics that work at the point of care.</li>
+      <li><strong>Dengue and Arboviral Diseases:</strong> RNA biosensors with sequence-specific discrimination — exactly what D13 demonstrates — could, in principle, be designed to detect dengue, chikungunya, or Zika viral RNAs. For seasonal outbreaks common across Pakistan, faster and cheaper molecular diagnostics are urgently needed.</li>
+    </ul>
+    <p style="margin-top:1rem; color:#dce8f2; font-style:italic; font-size:0.9rem;">The technology in this paper is early-stage. But the path from proof-of-concept nuclear biosensor to diagnostic tool for infectious diseases endemic to this region is a real and motivating trajectory.</p>
+  </div>
+
+  <h2 class="section-head">The bigger vision: rewriting the genome's address book</h2>
+
+  <p>The researchers do not stop at biosensing. The most ambitious implication of the study concerns the "nuclear matrix" — the structural scaffold inside the nucleus that governs the three-dimensional organization of our genome. How your DNA is folded and anchored determines, to a significant degree, which genes are active and which are silent. This is the world of epigenomics.</p>
+
+  <p>The RNA nanonets, viewed from a distance, look remarkably like a synthetic version of this nuclear matrix. They are mesh-like, geometrically regular, and physically occupy the nuclear space in a way no other synthetic molecule has managed before. The team proposes that future designs could be engineered with domains that specifically interact with Lamins — nuclear membrane proteins that anchor "Lamin-associated domains" of chromatin and suppress gene expression. By doing so, these nanonets could function as "synthetic LADs": programmable spatial anchors that physically reposition segments of the genome, switching gene expression programs on and off.</p>
+
+  <p>It sounds like science fiction. But every component of this vision has been demonstrated in some form. What this paper adds is the foundational platform — the ability to reliably build programmable structures inside the nucleus and keep them there.</p>
+
+  <div class="conclusion">
+    <p><strong>What this study ultimately proves</strong> is that RNA nanotechnology has matured past the stage of making elegant shapes in test tubes. We now have a genetically encoded, self-assembling system that operates inside the most restricted compartment of a living human cell. The cell is no longer just the target of molecular medicine — it is the factory.</p>
+    <p>Co-transcriptional folding handles the assembly. Paranemic cohesion handles the stability. Nuclear size and geometry handle the retention. Aptamers handle the sensing. Each piece was known before. What Chang et al. achieved was assembling them into a unified platform that functions end-to-end inside a living nucleus.</p>
+    <p>The next questions — How long do these structures persist? Can they be degraded on demand? How do they interact with nuclear proteins? Can they be targeted to specific genomic loci? — are all tractable with existing tools. The frontier has moved.</p>
+  </div>
+
+  <div class="ending-question">
+    <p>If we can now grow structural scaffolding around our DNA and anchor it to the walls of the nucleus, how far are we from having the ability to physically rewrite the spatial grammar of the human genome — not by editing the sequence, but by rearranging the architecture?</p>
+  </div>
+
+  <div class="references">
+    <h3>Source &amp; Further Reading</h3>
+    <p><strong>Primary paper:</strong> Chang, X., Jeziorek, M., Yang, Q., Bonder, E.M., Yan, H., Etchegaray, J-P., &amp; Zhang, F. (2026). Designer RNA nanostructures co-transcribed and self-assembled inside human cell nuclei. <em>Nature Communications, 17,</em> 1055. https://doi.org/10.1038/s41467-025-67817-y</p>
+    <p>This blog post was prepared for the RNA Biology course (Dr. Afzal Adnan) as part of the MS Interdisciplinary Biotechnology Program. All scientific claims are drawn directly from the cited primary research article.</p>
+  </div>
+
+</article>
+
+<footer class="site-footer">
+  RNA Biology Course · MS-IBT Program · 2025–2026
+</footer>
+
+</body>
+</html>
